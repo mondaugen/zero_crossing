@@ -1,0 +1,4 @@
+*.wav
+*.flac
+octave-workspace
+bin
