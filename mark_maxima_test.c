@@ -8,21 +8,21 @@ int main (void)
 {
 	size_t N = 1000;
 	double x[N];
-	size_t *m_maxima = (size_t*)malloc(sizeof(size_t)*N);
+	double **m_maxima = (double**)malloc(sizeof(double*)*N);
 	size_t n;
 	for (n = 0; n < N; n++) {
 		x[n] = cos(2.*M_PI*n/100.);
-        /* No maximum will have this index so we can see the number of maxima
+        /* No maximum will have this address so we can see the number of maxima
          * discovered */
-        m_maxima[n] = N+1;
+        m_maxima[n] = NULL;
 	}
-    mark_maxima(x, N, m_maxima, N);
+    mark_maxima(x, N, m_maxima, N-1);
     printf("Maxima: index, value\n");
     for (n = 0; n < N; n++) {
-        if (m_maxima[n] >= N) {
+        if (m_maxima[n] == NULL) {
             break;
         }
-        printf("%lu %f\n",m_maxima[n],x[m_maxima[n]]);
+        printf("%lu %f\n",m_maxima[n] - x, *m_maxima[n]);
     }
 }
 
