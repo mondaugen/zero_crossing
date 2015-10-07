@@ -4,11 +4,13 @@
  * x is the signal whose zero crossings you want to find
  * N is the length of x
  * uc is the container for the upward crossings if MZX_GROUP_CROSSINGS is set and
- * MZX_SEARCH_BACKWARD is set
+ * MZX_SEARCH_BACKWARD is set. Not written to if its value is NULL. This allows
+ * one to only search for downward crossings.
  * dc is the container for the downward crossings if MZX_GROUP_CROSSINGS is set,
  *  whereby uc will be the container for the upward crossings. If
  *  MZX_SEARCH_BACKWARD is set but MZX_GROUP_CROSSINGS is not set then all the
- *  crossings will be put in this array. 
+ *  crossings will be put in this array. Not written to if its value is NULL. This allows
+ * one to only search for upward crossings.
  * side is the side to start on. 1 is the positive side, 0 the negative.
  * x_l is the last non-zero sample of the previous, if run for the first time,
  *  set this to x
@@ -53,9 +55,13 @@ void mark_zeroxs(double *x, size_t N, double **uc, double **dc, int side,
                  * downward going zero-crossing. */
 				x_r = x + n;
                 if (opt & MZX_SEARCH_BACKWARD) {
-                    *(dc++) = x_l + (x_r - x_l) / 2;
+                    if (dc) {
+                        *(dc++) = x_l + (x_r - x_l) / 2;
+                    }
                 } else {
-                    *(uc++) = x_l + (x_r - x_l) / 2;
+                    if (uc) {
+                        *(uc++) = x_l + (x_r - x_l) / 2;
+                    }
                 }
 				side = 1;
                 nc++;
@@ -75,15 +81,23 @@ void mark_zeroxs(double *x, size_t N, double **uc, double **dc, int side,
 				x_r = x + n;
                 if (opt & MZX_GROUP_CROSSINGS) {
                     if (opt & MZX_SEARCH_BACKWARD) {
-                        *(uc++) = x_l + (x_r - x_l) / 2;
+                        if (uc) {
+                            *(uc++) = x_l + (x_r - x_l) / 2;
+                        }
                     } else {
-                        *(dc++) = x_l + (x_r - x_l) / 2;
+                        if (dc) {
+                            *(dc++) = x_l + (x_r - x_l) / 2;
+                        }
                     }
                 } else {
                     if (opt & MZX_SEARCH_BACKWARD) {
-                        *(dc++) = x_l + (x_r - x_l) / 2;
+                        if (uc) {
+                            *(dc++) = x_l + (x_r - x_l) / 2;
+                        }
                     } else {
-                        *(uc++) = x_l + (x_r - x_l) / 2;
+                        if (dc) {
+                            *(uc++) = x_l + (x_r - x_l) / 2;
+                        }
                     }
                 }
 				side = 0;
@@ -108,8 +122,12 @@ void mark_zeroxs(double *x, size_t N, double **uc, double **dc, int side,
     if (opt & MZX_NO_FINAL_NULL) {
         return;
     }
-	*uc = NULL; /* sentinel */
+    if (uc) {
+        *uc = NULL; /* sentinel */
+    }
     if (opt & MZX_GROUP_CROSSINGS) {
-        *dc = NULL;
+        if (dc) {
+            *dc = NULL;
+        }
     }
 }

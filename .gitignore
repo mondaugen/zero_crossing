@@ -2,3 +2,5 @@
 *.flac
 octave-workspace
 bin
+zerox
+mark_maxima_test
